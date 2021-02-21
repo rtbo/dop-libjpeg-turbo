@@ -18,21 +18,19 @@ function source()
     return 'libjpeg-turbo'
 end
 
-function build(dirs, profile)
-    local cmake = dop.CMake:new(profile)
+function build(dirs, config)
+    local cmake = dop.CMake:new(config.profile)
 
-    local build = dop.path('build', profile.digest_hash)
-    local install = dop.path('install', profile.digest_hash)
-    dop.mkdir {build, recurse = true}
+    dop.mkdir {dirs.build, recurse = true}
 
-    dop.from_dir(build, function()
+    dop.from_dir(dirs.build, function()
         cmake:configure{
-            src_dir = dop.path('..', '..', 'libjpeg-turbo'),
-            install_dir = dop.path('..', '..', install)
+            src_dir = dirs.src,
+            install_dir = dirs.install
         }
         cmake:build()
         cmake:install()
     end)
 
-    return install
+    return true
 end
